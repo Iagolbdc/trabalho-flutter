@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:app_trabalho/src/config.dart';
 import 'package:app_trabalho/src/pages/home_page.dart';
 import 'package:app_trabalho/src/pages/register_page.dart';
+import 'package:app_trabalho/src/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -19,9 +20,17 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool _isNotValidate = false;
+  final bool _isNotValidate = false;
 
   late SharedPreferences prefs;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
 
   @override
   void initState() {
@@ -32,6 +41,14 @@ class _LoginPageState extends State<LoginPage> {
 
   void initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
+  }
+
+  showSnackBar(String texto) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(texto),
+      ),
+    );
   }
 
   void loginUser() async {
@@ -47,29 +64,44 @@ class _LoginPageState extends State<LoginPage> {
         body: jsonEncode(body),
       );
 
+      // print(response.body);
+
+      // if (response.body == 200) {
+      //   showSnackBar(response.body);
+      // }
+
       var jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse["message"] == "email ou senha invalidos") {
+        showSnackBar(jsonResponse["message"]);
+      }
 
       print("########");
       print(jsonResponse['tokens']['access']);
       print("########");
 
-      if (jsonResponse['message'] == "success") {
+      if (jsonResponse['message'] != null) {
         var myToken = jsonResponse['tokens']['access'];
 
         prefs.setString('token', myToken);
 
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    AlunoListScreen(token: jsonResponse['tokens']['access'])));
-      } else if (jsonResponse['message']['errors'] ==
-          "Email já foi utilizado") {
-        print(jsonResponse['errors']);
-      } else if (jsonResponse['message']['errors'] ==
-          "Email já foi utilizado") {
-        print(jsonResponse['errors']);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AlunoListScreen(
+              token: jsonResponse['tokens']['access'],
+              apiService: ApiService(
+                authToken: jsonResponse['tokens']['access'],
+              ),
+            ),
+          ),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        showSnackBar("Preencha todos os campos corretamente");
       }
+    } else {
+      showSnackBar("Preencha todos os campos corretamente");
     }
   }
 
@@ -77,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
+        body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Center(
@@ -85,9 +117,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  HeightBox(10),
+                  const HeightBox(10),
                   "Email Sign-In".text.size(22).black.make(),
-                  HeightBox(50),
+                  const HeightBox(50),
                   TextField(
                     controller: emailController,
                     keyboardType: TextInputType.text,
@@ -96,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                         fillColor: Colors.white,
                         hintText: "Email",
                         errorText: _isNotValidate ? "Enter Proper Info" : null,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)))),
                   ).p4().px24(),
@@ -109,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                         fillColor: Colors.white,
                         hintText: "Password",
                         errorText: _isNotValidate ? "Enter Proper Info" : null,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)))),
                   ).p4().px24(),
@@ -132,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
         bottomNavigationBar: GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RegisterPage()));
+                MaterialPageRoute(builder: (context) => const RegisterPage()));
           },
           child: Container(
               height: 25,

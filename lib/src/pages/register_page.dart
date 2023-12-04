@@ -19,9 +19,24 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  String _errors = "";
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+  }
 
   bool _isNotValidate = false;
+
+  showSnackBar(String texto) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(texto),
+      ),
+    );
+  }
 
   void registerUser() async {
     if (emailController.text.isNotEmpty &&
@@ -47,11 +62,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (jsonResponse['message'] == "success") {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+            context, MaterialPageRoute(builder: (context) => const LoginPage()));
       } else {
-        _displayTextInputDialog(context);
+        showSnackBar("E-mail inválido ou já está em uso");
       }
     } else {
+      showSnackBar("Preencha todos os campos corretamente");
       setState(() {
         _isNotValidate = true;
       });
@@ -62,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
+        body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Center(
@@ -70,18 +86,16 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  HeightBox(10),
+                  const HeightBox(10),
                   "Criar nova conta".text.size(22).black.make(),
-                  HeightBox(50),
+                  const HeightBox(50),
                   TextField(
                     controller: usernameController,
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
                         errorStyle: TextStyle(color: Colors.black),
-                        errorText:
-                            _isNotValidate ? "Preencha este campo" : null,
                         hintText: "Username",
                         border: OutlineInputBorder(
                             borderRadius:
@@ -90,12 +104,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   TextField(
                     controller: emailController,
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
-                        errorStyle: TextStyle(color: Colors.black),
-                        errorText:
-                            _isNotValidate ? "Preencha este campo" : null,
                         hintText: "Email",
                         border: OutlineInputBorder(
                             borderRadius:
@@ -103,31 +114,21 @@ class _RegisterPageState extends State<RegisterPage> {
                   ).p4().px24(),
                   TextField(
                     controller: passwordController,
+                    obscureText: true,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                         suffixIcon: IconButton(
-                          icon: Icon(Icons.copy),
+                          icon: const Icon(Icons.copy),
                           onPressed: () {
                             final data =
                                 ClipboardData(text: passwordController.text);
                             Clipboard.setData(data);
                           },
                         ),
-                        prefixIcon: IconButton(
-                          icon: Icon(Icons.password),
-                          onPressed: () {
-                            String passGen = "generatePassword";
-                            passwordController.text = passGen;
-                            setState(() {});
-                          },
-                        ),
                         filled: true,
                         fillColor: Colors.white,
-                        errorStyle: TextStyle(color: Colors.black),
-                        errorText:
-                            _isNotValidate ? "Preencha este campo" : null,
                         hintText: "Password",
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0)))),
                   ).p4().px24(),
@@ -147,7 +148,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onTap: () {
                       print("Sign In");
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                          MaterialPageRoute(builder: (context) => const LoginPage()));
                     },
                     child: HStack([
                       "Já tem conta?".text.make(),
@@ -160,27 +161,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> _displayTextInputDialog(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Deu erro'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("exit"))
-            ],
-          ),
-        );
-      },
     );
   }
 }

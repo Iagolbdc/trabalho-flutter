@@ -1,4 +1,3 @@
-import 'package:app_trabalho/src/config.dart';
 import 'package:app_trabalho/src/pages/home_page.dart';
 import 'package:app_trabalho/src/pages/register_page.dart';
 import 'package:app_trabalho/src/providers/aluno_provider.dart';
@@ -25,8 +24,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => AlunoProvider(
-                apiService: ApiService(authToken: token, baseUrl: url)))
+            create: (_) =>
+                AlunoProvider(apiService: ApiService(authToken: token)))
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -37,8 +36,9 @@ class MyApp extends StatelessWidget {
         home: (token != null && JwtDecoder.isExpired(token) == false)
             ? AlunoListScreen(
                 token: token,
+                apiService: ApiService(authToken: token),
               )
-            : RegisterPage(),
+            : const RegisterPage(),
       ),
     );
   }

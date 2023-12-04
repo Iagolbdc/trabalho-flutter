@@ -7,6 +7,7 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.1.0 <4.0.0'
 dependencies:
+  brasil_fields: ^1.14.1
   cupertino_icons: ^1.0.2
   dio: ^5.4.0
   equatable: ^2.0.5
@@ -15,6 +16,8 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   flutter_speed_dial: ^7.0.0
   http: ^1.1.0
+  http_parser: ^4.0.2
+  image_picker: ^1.0.4
   intl: ^0.18.1
   jwt_decoder: ^2.0.1
   path_provider: ^2.1.1

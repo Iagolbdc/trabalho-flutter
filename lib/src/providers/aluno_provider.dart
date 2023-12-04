@@ -1,3 +1,4 @@
+import 'package:app_trabalho/src/config.dart';
 import 'package:app_trabalho/src/models/aluno_model.dart';
 import 'package:flutter/material.dart';
 import 'package:app_trabalho/src/services/api_service.dart';
@@ -10,10 +11,10 @@ class AlunoProvider extends ChangeNotifier {
   List<AlunoModel> get alunos => _alunos;
 
   Future<void> fetchAlunos() async {
-    final response = await apiService.get('alunos');
+    final response = await apiService.get(getAlunos);
     print(response);
     _alunos =
-        (response as List).map((aluno) => AlunoModel.fromJson(aluno)).toList();
+        (response).map((aluno) => AlunoModel.fromJson(aluno)).toList();
     notifyListeners();
   }
 

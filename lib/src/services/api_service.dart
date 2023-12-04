@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl;
   final String authToken;
 
-  ApiService({required this.baseUrl, required this.authToken});
+  ApiService({required this.authToken});
 
   Future<Map<String, String>> _getHeaders() async {
     return {
@@ -14,9 +13,9 @@ class ApiService {
     };
   }
 
-  Future<List<dynamic>> get(String endpoint) async {
-    final response = await http.get(Uri.parse('$baseUrl/$endpoint'),
-        headers: await _getHeaders());
+  Future<List<dynamic>> get(String url) async {
+    final response =
+        await http.get(Uri.parse(url), headers: await _getHeaders());
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
@@ -26,9 +25,15 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> post(
-      String endpoint, Map<String, dynamic> data) async {
-    final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
+      String url, Map<String, dynamic> data) async {
+    final response = await http.post(Uri.parse(url),
         headers: await _getHeaders(), body: json.encode(data));
     return json.decode(response.body);
+  }
+
+  Future<int> delete(String url, int id) async {
+    final response =
+        await http.delete(Uri.parse('$url/$id'), headers: await _getHeaders());
+    return response.statusCode;
   }
 }

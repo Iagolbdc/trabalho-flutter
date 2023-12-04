@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class AlunoModel {
   final String nome;
   final String matricula;
