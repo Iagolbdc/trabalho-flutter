@@ -12,9 +12,7 @@ class AlunoProvider extends ChangeNotifier {
 
   Future<void> fetchAlunos() async {
     final response = await apiService.get(getAlunos);
-    print(response);
-    _alunos =
-        (response).map((aluno) => AlunoModel.fromJson(aluno)).toList();
+    _alunos = (response).map((aluno) => AlunoModel.fromJson(aluno)).toList();
     notifyListeners();
   }
 

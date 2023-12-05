@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String authToken;
+  final String? authToken;
 
-  ApiService({required this.authToken});
+  ApiService({this.authToken});
 
   Future<Map<String, String>> _getHeaders() async {
     return {
@@ -13,9 +13,15 @@ class ApiService {
     };
   }
 
+  Future<Map<String, String>> _getHeadersGet() async {
+    return {
+      'Content-Type': 'application/json',
+    };
+  }
+
   Future<List<dynamic>> get(String url) async {
     final response =
-        await http.get(Uri.parse(url), headers: await _getHeaders());
+        await http.get(Uri.parse(url), headers: await _getHeadersGet());
 
     if (response.statusCode == 200) {
       return json.decode(response.body);

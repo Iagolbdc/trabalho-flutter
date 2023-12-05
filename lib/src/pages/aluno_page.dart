@@ -101,6 +101,8 @@ class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
         appBar: AppBar(
           title: const Text('Detalhes do Aluno'),
           backgroundColor: Colors.blue,
+          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+          foregroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
           child: Column(

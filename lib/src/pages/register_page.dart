@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_trabalho/src/pages/login_page.dart';
+import 'package:app_trabalho/src/services/auth_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:http/http.dart" as http;
@@ -39,39 +40,13 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void registerUser() async {
-    if (emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        usernameController.text.isNotEmpty) {
-      var body = {
-        "email": emailController.text,
-        "username": usernameController.text,
-        "password": passwordController.text,
-      };
-
-      var response = await http.post(
-        Uri.parse(registration),
-        headers: {'Content-Type': "application/json"},
-        body: jsonEncode(body),
-      );
-
-      var jsonResponse = jsonDecode(response.body);
-
-      print("####");
-      print(jsonResponse);
-      print("####");
-
-      if (jsonResponse['message'] == "success") {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const LoginPage()));
-      } else {
-        showSnackBar("E-mail inválido ou já está em uso");
-      }
-    } else {
-      showSnackBar("Preencha todos os campos corretamente");
-      setState(() {
-        _isNotValidate = true;
-      });
-    }
+    await AuthMethods.registerUser(
+      email: emailController.text,
+      username: usernameController.text,
+      password: passwordController.text,
+      showSnackBar: showSnackBar,
+      context: context,
+    );
   }
 
   @override
@@ -147,8 +122,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   GestureDetector(
                     onTap: () {
                       print("Sign In");
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const LoginPage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()));
                     },
                     child: HStack([
                       "Já tem conta?".text.make(),

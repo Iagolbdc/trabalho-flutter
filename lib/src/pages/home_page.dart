@@ -25,6 +25,12 @@ class AlunoListScreen extends StatefulWidget {
 
 class _AlunoListScreenState extends State<AlunoListScreen> {
   bool isLoading = true;
+
+  late List<AlunoModel> alunos;
+  late List<AlunoModel> filteredAlunos;
+
+  final TextEditingController _searchController = TextEditingController();
+
   var ticket;
 
   getData() async {
@@ -35,8 +41,14 @@ class _AlunoListScreenState extends State<AlunoListScreen> {
     await Provider.of<AlunoProvider>(context, listen: false).fetchAlunos();
 
     setState(() {
+      alunos = Provider.of<AlunoProvider>(context, listen: false).alunos;
+      filteredAlunos = alunos;
       isLoading = false;
     });
+  }
+
+  Future<void> _refreshData() async {
+    getData();
   }
 
   @override
@@ -100,7 +112,8 @@ class _AlunoListScreenState extends State<AlunoListScreen> {
   signOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    prefs.remove('token');
+    prefs.remove('token_access');
+    prefs.remove('token_refresh');
 
     Navigator.pushAndRemoveUntil(
       context,
@@ -148,6 +161,8 @@ class _AlunoListScreenState extends State<AlunoListScreen> {
       ),
       appBar: AppBar(
         title: const Text('Lista de Alunos'),
+        backgroundColor: const Color.fromARGB(255, 51, 136, 234),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
         actions: [
           IconButton(
             onPressed: () {
@@ -158,10 +173,6 @@ class _AlunoListScreenState extends State<AlunoListScreen> {
                       title: const Text('Opções'),
                       children: [
                         SimpleDialogOption(
-                          child: const Text('Recarregar'),
-                          onPressed: () => getData(),
-                        ),
-                        SimpleDialogOption(
                           child: const Text('Sair'),
                           onPressed: () => signOut(),
                         ),
@@ -169,49 +180,79 @@ class _AlunoListScreenState extends State<AlunoListScreen> {
                     );
                   });
             },
-            icon: const Icon(Icons.account_circle, size: 40),
+            icon: const Icon(
+              Icons.menu,
+              size: 40,
+              color: Colors.white,
+            ),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
           ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (query) {
+                  setState(() {
+                    filteredAlunos = alunos
+                        .where((aluno) => aluno.nome
+                            .toLowerCase()
+                            .contains(query.toLowerCase()))
+                        .toList();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: 'Pesquisar',
+                  hintStyle: TextStyle(color: Colors.white),
+                  suffixIcon: Icon(Icons.search, color: Colors.white),
+                ),
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
         ],
       ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Consumer<AlunoProvider>(
-              builder: (context, alunoProvider, child) {
-                if (alunoProvider.alunos.isEmpty) {
-                  return const Center(
-                    child: Text('Nenhum aluno disponível.'),
-                  );
-                } else {
-                  return ListView.builder(
-                    itemCount: alunoProvider.alunos.length,
-                    itemBuilder: (context, index) {
-                      AlunoModel aluno = alunoProvider.alunos[index];
-                      return ListTile(
-                        title: Text(aluno.nome),
-                        // Adicione mais informações do aluno conforme necessário
-                        onTap: () {
-                          // Navegar para a página de detalhes do aluno
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AlunoDetailScreen(
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Consumer<AlunoProvider>(
+                builder: (context, alunoProvider, child) {
+                  if (filteredAlunos.isEmpty) {
+                    return const Center(
+                      child: Text('Nenhum aluno encontrado.'),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: filteredAlunos.length,
+                      itemBuilder: (context, index) {
+                        AlunoModel aluno = filteredAlunos[index];
+                        return ListTile(
+                          title: Text(aluno.nome),
+                          subtitle: Text("Matrícula: ${aluno.matricula}"),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AlunoDetailScreen(
                                   aluno: aluno,
                                   apiService: widget.apiService,
-                                  token: widget.token),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                }
-              },
-            ),
+                                  token: widget.token,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+      ),
     );
   }
 }

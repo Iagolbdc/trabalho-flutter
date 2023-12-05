@@ -1,4 +1,3 @@
-
 import 'package:app_trabalho/src/config.dart';
 import 'package:app_trabalho/src/pages/home_page.dart';
 import 'package:app_trabalho/src/services/api_service.dart';
@@ -81,12 +80,13 @@ class _AddAlunoState extends State<AddAluno> {
 
       if (response.statusCode == 201) {
         print('Aluno adicionado com sucesso!');
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => AlunoListScreen(
                 token: widget.token, apiService: widget.apiService),
           ),
+          (Route<dynamic> route) => false,
         );
       } else {
         print('Falha ao adicionar aluno. Resposta: ${responsed.body}');
@@ -152,6 +152,8 @@ class _AddAlunoState extends State<AddAluno> {
         title: const Text('Criar Perfil'),
         centerTitle: false,
         backgroundColor: const Color.fromARGB(255, 51, 136, 234),
+        titleTextStyle: TextStyle(color: Colors.white),
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Column(
