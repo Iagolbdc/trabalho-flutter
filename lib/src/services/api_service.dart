@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:AlunoConnect/src/pages/home_page.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -37,9 +39,21 @@ class ApiService {
     return json.decode(response.body);
   }
 
-  Future<int> delete(String url, int id) async {
+  Future<void> delete({
+    required String url,
+    required int id,
+    required Function(String) showSnackBar,
+    required Function navigate,
+    required BuildContext context,
+  }) async {
     final response =
         await http.delete(Uri.parse('$url/$id'), headers: await _getHeaders());
-    return response.statusCode;
+    print("########################");
+    print(response.statusCode);
+    if (response.statusCode == 204) {
+      navigate();
+    } else {
+      showSnackBar("Certifique-se de excluir um usuário que você criou");
+    }
   }
 }

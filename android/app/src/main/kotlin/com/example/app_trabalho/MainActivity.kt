@@ -1,4 +1,4 @@
-package com.example.app_trabalho
+package com.example.aluno_connect
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,7 +1,7 @@
-import 'package:app_trabalho/src/pages/home_page.dart';
-import 'package:app_trabalho/src/pages/register_page.dart';
-import 'package:app_trabalho/src/providers/aluno_provider.dart';
-import 'package:app_trabalho/src/services/api_service.dart';
+import 'package:AlunoConnect/src/pages/home_page.dart';
+import 'package:AlunoConnect/src/pages/register_page.dart';
+import 'package:AlunoConnect/src/providers/aluno_provider.dart';
+import 'package:AlunoConnect/src/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:provider/provider.dart';
@@ -51,10 +51,10 @@ class MyApp extends StatelessWidget {
 }
 
 
-// import 'package:app_trabalho/src/pages/home_page.dart';
-// import 'package:app_trabalho/src/pages/register_page.dart';
-// import 'package:app_trabalho/src/providers/aluno_provider.dart';
-// import 'package:app_trabalho/src/services/api_service.dart';
+// import 'package:AlunoConnect/src/pages/home_page.dart';
+// import 'package:AlunoConnect/src/pages/register_page.dart';
+// import 'package:AlunoConnect/src/providers/aluno_provider.dart';
+// import 'package:AlunoConnect/src/services/api_service.dart';
 // import 'package:flutter/material.dart';
 // import 'package:jwt_decoder/jwt_decoder.dart';
 // import 'package:provider/provider.dart';

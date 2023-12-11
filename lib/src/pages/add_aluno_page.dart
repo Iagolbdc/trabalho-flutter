@@ -1,7 +1,7 @@
-import 'package:app_trabalho/src/config.dart';
-import 'package:app_trabalho/src/pages/home_page.dart';
-import 'package:app_trabalho/src/services/api_service.dart';
-import 'package:app_trabalho/src/services/image_service.dart';
+import 'package:AlunoConnect/src/config.dart';
+import 'package:AlunoConnect/src/pages/home_page.dart';
+import 'package:AlunoConnect/src/services/api_service.dart';
+import 'package:AlunoConnect/src/services/image_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -61,6 +61,7 @@ class _AddAlunoState extends State<AddAluno> {
       request.fields['matricula'] = _matriculaController.text;
       request.fields['idade'] = _idadeController.text;
       request.fields['telefone_responsavel'] = _telefoneController.text;
+      request.fields['url'] = "${url}aluno/";
 
       // Adicionar a imagem ao FormData
       if (_image != null) {

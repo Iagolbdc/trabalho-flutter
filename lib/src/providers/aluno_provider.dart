@@ -1,7 +1,7 @@
-import 'package:app_trabalho/src/config.dart';
-import 'package:app_trabalho/src/models/aluno_model.dart';
+import 'package:AlunoConnect/src/config.dart';
+import 'package:AlunoConnect/src/models/aluno_model.dart';
 import 'package:flutter/material.dart';
-import 'package:app_trabalho/src/services/api_service.dart';
+import 'package:AlunoConnect/src/services/api_service.dart';
 
 class AlunoProvider extends ChangeNotifier {
   final ApiService apiService;

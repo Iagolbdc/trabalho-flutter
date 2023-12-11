@@ -1,4 +1,4 @@
-# app_trabalho
+# aluno_connect
 
 A new Flutter project.
 

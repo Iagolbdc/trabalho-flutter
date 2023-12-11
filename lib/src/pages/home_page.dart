@@ -1,10 +1,10 @@
-import 'package:app_trabalho/src/config.dart';
-import 'package:app_trabalho/src/models/aluno_model.dart';
-import 'package:app_trabalho/src/pages/add_aluno_page.dart';
-import 'package:app_trabalho/src/pages/aluno_page.dart';
-import 'package:app_trabalho/src/pages/register_page.dart';
-import 'package:app_trabalho/src/providers/aluno_provider.dart';
-import 'package:app_trabalho/src/services/api_service.dart';
+import 'package:AlunoConnect/src/config.dart';
+import 'package:AlunoConnect/src/models/aluno_model.dart';
+import 'package:AlunoConnect/src/pages/add_aluno_page.dart';
+import 'package:AlunoConnect/src/pages/aluno_page.dart';
+import 'package:AlunoConnect/src/pages/register_page.dart';
+import 'package:AlunoConnect/src/providers/aluno_provider.dart';
+import 'package:AlunoConnect/src/services/api_service.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
@@ -37,7 +37,7 @@ class _AlunoListScreenState extends State<AlunoListScreen> {
     setState(() {
       isLoading = true;
     });
-
+    print(widget.token);
     await Provider.of<AlunoProvider>(context, listen: false).fetchAlunos();
 
     setState(() {

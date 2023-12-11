@@ -1,6 +1,6 @@
 {
-    "name": "app_trabalho",
-    "short_name": "app_trabalho",
+    "name": "aluno_connect",
+    "short_name": "aluno_connect",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

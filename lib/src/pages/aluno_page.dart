@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:app_trabalho/src/config.dart';
-import 'package:app_trabalho/src/models/aluno_model.dart';
-import 'package:app_trabalho/src/pages/home_page.dart';
-import 'package:app_trabalho/src/services/api_service.dart';
+import 'package:AlunoConnect/src/config.dart';
+import 'package:AlunoConnect/src/models/aluno_model.dart';
+import 'package:AlunoConnect/src/pages/home_page.dart';
+import 'package:AlunoConnect/src/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,8 +26,34 @@ class AlunoDetailScreen extends StatefulWidget {
 }
 
 class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
-  //String horario = widget.aluno.horarioSaida!;
-  //DateTime horarioSaida = DateTime.parse(widget.aluno.horarioSaida!);
+  showSnackBar(String texto) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(texto),
+      ),
+    );
+  }
+
+  navigate() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AlunoListScreen(
+            token: widget.token,
+            apiService: ApiService(authToken: widget.token),
+          ),
+        ),
+        (Route<dynamic> route) => false);
+  }
+
+  deleteAluno() async {
+    await widget.apiService.delete(
+        url: aluno,
+        id: widget.aluno.id,
+        showSnackBar: showSnackBar,
+        context: context,
+        navigate: navigate);
+  }
 
   Future<void> _downloadPhoto() async {
     var status = await Permission.storage.status;
@@ -43,7 +69,6 @@ class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
         File file = File(filePath);
         await file.writeAsBytes(response.bodyBytes);
 
-        // Mostrar feedback para o usuário ou fazer outras operações após o download
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Foto baixada com sucesso: $filePath'),
@@ -54,7 +79,6 @@ class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
             'Falha ao baixar a foto. Código de status: ${response.statusCode}');
       }
     } catch (error) {
-      // Tratar erros durante o processo de download
       print('Erro ao baixar a foto: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -93,6 +117,7 @@ class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
     } else {
       horarioSaida = "ainda não registrada";
     }
+    print(widget.aluno.qrcode);
   }
 
   @override
@@ -258,6 +283,24 @@ class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.accessibility,
+                            size: 30, color: Color.fromARGB(255, 134, 28, 79)),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5)),
+                        Text(
+                          "Liberado: ${widget.aluno.liberado ? 'Sim' : 'Não'}",
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 12),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -300,15 +343,7 @@ class _AlunoDetailScreenState extends State<AlunoDetailScreen> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  onPressed: () async {
-                    await widget.apiService.delete(aluno, widget.aluno.id);
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AlunoListScreen(
-                                token: widget.token,
-                                apiService: widget.apiService)));
-                  },
+                  onPressed: deleteAluno,
                   child: const Text(
                     'Excluir aluno',
                     style: TextStyle(color: Colors.white),
